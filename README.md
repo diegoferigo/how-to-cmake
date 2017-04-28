@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/diegoferigo/how-to-cmake.svg?branch=master)](https://travis-ci.org/diegoferigo/how-to-cmake)
+
 # Demo repository for CMake-based projects
 
 This repository contains a template tree of sources for building / installing / exporting / importing libraries and executables with CMake.

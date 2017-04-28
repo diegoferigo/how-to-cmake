@@ -1,0 +1,63 @@
+sudo: false
+dist: trusty
+language: cpp
+cache: ccache
+
+compiler:
+  - clang
+  - gcc
+
+os:
+  - linux
+  - osx
+
+env:
+  matrix:
+    - TRAVIS_CMAKE_GENERATOR="Unix Makefiles", TRAVIS_BUILD_TYPE="Release"
+    - TRAVIS_CMAKE_GENERATOR="Unix Makefiles", TRAVIS_BUILD_TYPE="Debug"
+  global:
+    - PROJECT_DIR_ABS=$TRAVIS_BUILD_DIR
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env: TRAVIS_CMAKE_GENERATOR="Xcode", TRAVIS_BUILD_TYPE="Release"
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env: TRAVIS_CMAKE_GENERATOR="Xcode", TRAVIS_BUILD_TYPE="Debug"
+
+before_install:
+
+before_script:
+  - PROJECT_DIRECTORIES=(Project1 Project2 Project3)
+  # Setup the build folders
+  - cd $PROJECT_DIR_ABS
+  - >-
+    for p in ${PROJECT_DIRECTORIES[*]} ; do
+      mkdir $p/build
+    done
+
+script:
+  # Configure, build, and install the projects
+  - cd $PROJECT_DIR_ABS
+  - >-
+    for p in ${PROJECT_DIRECTORIES[*]} ; do
+      echo $CMAKE_PREFIX_PATH
+      cd $p/build
+      echo "Configuring $p"
+      cmake .. \
+        -G"${TRAVIS_CMAKE_GENERATOR}" \
+        -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} \
+        -DCMAKE_INSTALL_PREFIX=$(pwd)/../../install/$p || travis_terminate 1
+      echo "Building $p"
+      cmake --build . --config ${TRAVIS_BUILD_TYPE} || travis_terminate 1
+      echo "Installing $p"
+      cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install
+      export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$(pwd)/../../install/$p
+      cd $PROJECT_DIR_ABS
+    done
+
+after_success:
