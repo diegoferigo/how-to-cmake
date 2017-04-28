@@ -27,12 +27,13 @@ CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$(pwd)/../../install/Project1
 
 ## Project2
 
-*   `Lib2` `Lib3`: handled as `COMPONENTS`
+(TODO: switch to `COMPONENTS`)
+
 *   `Lib2`: standalone
 *   `Lib3`: links with `Lib2`
 *   `Main2`: links with `Lib3`
 
-This project shows how to handle a library project split in different components.
+This project shows how to handle a library project split in different parts.
 
 Two use cases are considered:
 1.   `Main2`: is an in-tree executable used as unit test of the `Lib2` and `Lib3`
